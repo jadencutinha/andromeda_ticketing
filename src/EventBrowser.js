@@ -1,32 +1,126 @@
+// src/EventBrowser.js
 import React, { useState, useEffect } from 'react';
 import EventCard from './EventCard';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 
-function EventBrowser({categoryFilter}) {
+// Enhanced Mock Data for NFT Ticketing App
+const mockEventsData = [
+  {
+    id: 'nft-music-fest-001', title: 'Decentralized Beats Fest', description: 'Experience the future of music with top Web3 DJs. Your NFT ticket unlocks exclusive content.',
+    image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60',
+    category: 'Arts, Entertainment, & Lifestyle',
+    isNFT: true, price: 0.5, currency: 'ETH', availableTickets: 50, totalTickets: 200
+  },
+  {
+    id: 'digital-art-expo-002', title: 'CryptoArt Showcase 2024', description: 'A curated exhibition of groundbreaking digital art, tokenized as NFTs.',
+    image: 'https://images.unsplash.com/photo-1620421680784-2818d147517f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60',
+    category: 'Arts, Entertainment, & Lifestyle',
+    isNFT: true, price: 1.2, currency: 'MATIC', availableTickets: 20, totalTickets: 50
+  },
+  {
+    id: 'vr-gaming-con-003', title: 'Metaverse Gaming Con', description: 'Join top VR developers and gamers. NFT pass for early access and in-game items.',
+    image: 'https://images.unsplash.com/photo-1580236176063-3352d2a1b5f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60',
+    category: 'Arts, Entertainment, & Lifestyle',
+    isNFT: true, price: 0.8, currency: 'USDC', availableTickets: 0, totalTickets: 200 // Sold out example
+  },
+  {
+    id: 'deficon-world-004', title: 'DeFi World Summit NFT Pass', description: 'Exclusive NFT ticket for keynotes and workshops at the leading DeFi conference.',
+    image: 'https://images.unsplash.com/photo-1640099001787-390d7a0f90f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60',
+    category: 'Business, Tech, & Conferences',
+    isNFT: true, price: 2.5, currency: 'ETH', availableTickets: 30, totalTickets: 100
+  },
+  {
+    id: 'web3-builders-005', title: 'Web3 Innovators Pitch Night', description: 'NFT entry for an exclusive evening of Web3 startup pitches and networking.',
+    image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60',
+    category: 'Business, Tech, & Conferences',
+    isNFT: true, price: 1.0, currency: 'DAI', availableTickets: 75, totalTickets: 150
+  },
+  {
+    id: 'ai-blockchain-sync-006', title: 'AI & Blockchain Synergies Forum', description: 'Explore the intersection of AI and Blockchain. NFT ticket includes access to research papers.',
+    image: 'https://images.unsplash.com/photo-1678483789004-e71996ba818a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60',
+    category: 'Business, Tech, & Conferences',
+    isNFT: true, price: 0.0, currency: 'FREE', availableTickets: 100, totalTickets: 250, // Free NFT example
+  },
+  {
+    id: 'dao-community-meet-007', title: 'Local DAO Governance Meetup', description: 'Join your local DAO for a governance discussion. NFT POAP for attendees.',
+    image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60',
+    category: 'Community & Special Interest',
+    isNFT: true, price: 0.01, currency: 'ETH', availableTickets: 40, totalTickets: 50
+  },
+  {
+    id: 'nft-collectors-hangout-008', title: 'NFT Collectors Hub', description: 'A special interest group for NFT enthusiasts to share and discuss collections. Free mint.',
+    image: 'https://images.unsplash.com/photo-1639754001477-999316c79f93?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60',
+    category: 'Community & Special Interest',
+    isNFT: true, price: 0, currency: 'FREE', availableTickets: 95, totalTickets: 100
+  },
+  {
+    id: 'charity-art-auction-009', title: 'ArtForGood NFT Auction', description: 'Support a cause! All proceeds from NFT art sales go to charity. Ticketed by NFT badge.',
+    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60',
+    category: 'Community & Special Interest',
+    isNFT: true, price: 0.2, currency: 'MATIC', availableTickets: 60, totalTickets: 75
+  }
+];
+
+function EventBrowser({ categoryFilter }) {
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Replace with API call to fetch events later
-    // Example:
-    // axios.get('/api/events').then(response => setEvents(response.data));
-    // For now, use mock data:
-    const mockEvents = [
-      { id: 1, title: 'React Conference', description: 'A great conference!', image: 'https://via.placeholder.com/345x140', category: 'Technology' },
-      { id: 2, title: 'JS Meetup', description: 'Discussing JavaScript.', image: 'https://via.placeholder.com/345x140', category: 'Technology'  },
-      { id: 3, title: 'EDC', description: 'Dance music.', image: 'https://via.placeholder.com/345x140', category: 'Music'  }
-    ];
-    setEvents(mockEvents);
+    setLoading(true);
+    // Simulate API call to fetch events
+    const fetchEvents = async () => {
+      try {
+        // In a real app, this would be an API call:
+        // const response = await axios.get('/api/nft-events');
+        // setEvents(response.data);
+        await new Promise(resolve => setTimeout(resolve, 1200)); // Simulate network delay
+        setEvents(mockEventsData);
+      } catch (error) {
+        console.error("Failed to fetch events:", error);
+        // Optionally, set an error state here to display to the user
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  }, []);
+    fetchEvents();
+  }, []); // Fetch events once on component mount
 
-  const filteredEvents = categoryFilter === 'All' ? events : events.filter(event => event.category === categoryFilter);
+  const filteredEvents = categoryFilter === 'All'
+    ? events
+    : events.filter(event => event.category === categoryFilter);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh', flexDirection: 'column' }}>
+        <CircularProgress size={60} />
+        <Typography variant="h6" sx={{ mt: 2 }}>Loading Events...</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <div>
-      <h1>Event Browser</h1>
-      {filteredEvents.map(event => (
-        <EventCard key={event.id} event={event} />
-      ))}
-    </div>
+    <Box sx={{ py: 4 }}>
+      <Typography variant="h4" component="h1" gutterBottom sx={{ textAlign: 'center', mb: 4, fontWeight: 'bold', color: 'primary.main' }}>
+        Discover NFT-Powered Events
+      </Typography>
+      {filteredEvents.length === 0 && !loading ? (
+        <Typography sx={{ textAlign: 'center', mt: 5, fontStyle: 'italic' }}>
+          No events found for this category. Try selecting "All Categories".
+        </Typography>
+      ) : (
+        <Grid container spacing={4}> {/* Increased spacing */}
+          {filteredEvents.map(event => (
+            <Grid item xs={12} sm={6} md={4} key={event.id}>
+              <EventCard event={event} />
+            </Grid>
+          ))}
+        </Grid>
+      )}
+    </Box>
   );
 }
 
