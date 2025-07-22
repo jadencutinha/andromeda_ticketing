@@ -1,5 +1,6 @@
 // src/EventCard.js
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -8,12 +9,15 @@ import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
 import Chip from '@mui/material/Chip';
 import Box from '@mui/material/Box';
-import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber'; // For NFT ticket icon
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney'; // For price
-import EventSeatIcon from '@mui/icons-material/EventSeat'; // For available tickets
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import EventSeatIcon from '@mui/icons-material/EventSeat';
 
 function EventCard({ event }) {
+  const navigate = useNavigate(); // Initialize useNavigate
+
   const {
+    id, // Make sure your event object has an 'id'
     title,
     description,
     image,
@@ -26,8 +30,12 @@ function EventCard({ event }) {
   } = event;
 
   const handleBuyTicket = () => {
-    // Placeholder: Implement actual ticket buying logic (e.g., interact with smart contract)
-    alert(`Attempting to buy ticket for: ${title}`);
+    if (event.id) {
+      navigate(`/event/${event.id}/purchase`); // Navigate to the purchase page
+    } else {
+      console.error("Event ID is missing, cannot navigate to purchase page.");
+      alert("Error: Event details are incomplete.");
+    }
   };
 
   return (
@@ -42,7 +50,7 @@ function EventCard({ event }) {
         <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
           {title}
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 1, minHeight: '40px' }}> {/* Min height for description consistency */}
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1, minHeight: '40px' }}>
           {description}
         </Typography>
         <Chip label={category} size="small" color="secondary" variant="outlined" sx={{ mb: 1 }} />
@@ -80,8 +88,8 @@ function EventCard({ event }) {
           size="medium"
           variant="contained"
           color="primary"
-          onClick={handleBuyTicket}
-          disabled={availableTickets === 0 || !isNFT} // Disable if not an NFT or sold out
+          onClick={handleBuyTicket} // Updated handler
+          disabled={availableTickets === 0 || !isNFT}
           fullWidth
         >
           {availableTickets === 0 ? "Sold Out" : (isNFT ? "Buy NFT Ticket" : "Get Ticket")}
