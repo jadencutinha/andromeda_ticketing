@@ -17,7 +17,7 @@ function FilterBar({ onCategoryChange }) {
         "Community & Special Interest": "Local gatherings, DAO meetups, hobby groups, and special interest events utilizing NFT passes or POAPs."
     };
 
-    const [selectedValue, setSelectedValue] = React.useState('All'); // Default to 'All'
+    const [selectedValue, setSelectedValue] = React.useState('All'); 
 
     const handleChange = (event) => {
         const newCategory = event.target.value;

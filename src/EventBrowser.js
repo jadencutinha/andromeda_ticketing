@@ -6,7 +6,6 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 
-// Enhanced Mock Data for NFT Ticketing App
 export const mockEventsData = [
   {
     id: 'nft-music-fest-001', title: 'Decentralized Beats Fest', description: 'Experience the future of music with top Web3 DJs. Your NFT ticket unlocks exclusive content.',
@@ -70,24 +69,19 @@ function EventBrowser({ categoryFilter }) {
 
   useEffect(() => {
     setLoading(true);
-    // Simulate API call to fetch events
     const fetchEvents = async () => {
       try {
-        // In a real app, this would be an API call:
-        // const response = await axios.get('/api/nft-events');
-        // setEvents(response.data);
         await new Promise(resolve => setTimeout(resolve, 1200)); // Simulate network delay
         setEvents(mockEventsData);
       } catch (error) {
         console.error("Failed to fetch events:", error);
-        // Optionally, set an error state here to display to the user
       } finally {
         setLoading(false);
       }
     };
 
     fetchEvents();
-  }, []); // Fetch events once on component mount
+  }, []); 
 
   const filteredEvents = categoryFilter === 'All'
     ? events
@@ -112,7 +106,7 @@ function EventBrowser({ categoryFilter }) {
           No events found for this category. Try selecting "All Categories".
         </Typography>
       ) : (
-        <Grid container spacing={4}> {/* Increased spacing */}
+        <Grid container spacing={4}> {}
           {filteredEvents.map(event => (
             <Grid item xs={12} sm={6} md={4} key={event.id}>
               <EventCard event={event} />

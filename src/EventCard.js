@@ -14,10 +14,10 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import EventSeatIcon from '@mui/icons-material/EventSeat';
 
 function EventCard({ event }) {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
 
   const {
-    id, // Make sure your event object has an 'id'
+    id, 
     title,
     description,
     image,
@@ -31,7 +31,7 @@ function EventCard({ event }) {
 
   const handleBuyTicket = () => {
     if (event.id) {
-      navigate(`/event/${event.id}/purchase`); // Navigate to the purchase page
+      navigate(`/event/${event.id}/purchase`); 
     } else {
       console.error("Event ID is missing, cannot navigate to purchase page.");
       alert("Error: Event details are incomplete.");
@@ -88,7 +88,7 @@ function EventCard({ event }) {
           size="medium"
           variant="contained"
           color="primary"
-          onClick={handleBuyTicket} // Updated handler
+          onClick={handleBuyTicket} 
           disabled={availableTickets === 0 || !isNFT}
           fullWidth
         >

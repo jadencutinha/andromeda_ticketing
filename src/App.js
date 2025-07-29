@@ -1,7 +1,6 @@
 // src/App.js
 import React, { useState, useEffect, useMemo, useCallback } from 'react'; // Ensure all hooks are imported
 import { BrowserRouter as Router, Routes, Route, Link as RouterLink } from 'react-router-dom';
-// import { ethers } from 'ethers'; // Commented out - not used for Keplr directly
 
 // --- ALL TOP-LEVEL IMPORTS ---
 import Container from '@mui/material/Container';
@@ -10,8 +9,8 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import { createTheme, ThemeProvider } from '@mui/material/styles'; // createTheme and ThemeProvider are from here
-import CssBaseline from '@mui/material/CssBaseline';               // CssBaseline is from here
+import { createTheme, ThemeProvider } from '@mui/material/styles'; 
+import CssBaseline from '@mui/material/CssBaseline';               
 import IconButton from '@mui/material/IconButton';
 import AdbIcon from '@mui/icons-material/Adb';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
@@ -26,7 +25,6 @@ import TicketInteractionModal from './TicketInteractionModal';
 // --- END OF IMPORTS ---
 
 const ANDROMEDA_CHAIN_ID = "andromeda-1"; 
-
 const KEPLR_INSTALL_URL = "https://www.keplr.app/download";
 
 const AppHeader = ({
@@ -53,7 +51,6 @@ const AppHeader = ({
           <Box sx={{ flexGrow: 1 }} />
           <IconButton title="Ticket Interaction" color="inherit" onClick={handleOpenInteractionModal} sx={{ mr: 1 }}><QrCodeScannerIcon /></IconButton>
           <IconButton sx={{ ml: 1 }} onClick={toggleDarkMode} color="inherit">{darkMode ? <Brightness7Icon /> : <Brightness4Icon />}</IconButton>
-          
           {walletConnected && connectedAccount ? (
             <Box sx={{ display: 'flex', alignItems: 'center', ml: 1, p:0.5, border: '1px solid rgba(255,255,255,0.23)', borderRadius: 1 }}>
                <AccountBalanceWalletIcon sx={{fontSize: '1.2rem', mr: 0.5, color: 'inherit'}} />
@@ -79,7 +76,6 @@ const AppHeader = ({
   );
 };
 
-
 function App() {
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [walletConnected, setWalletConnected] = useState(false);
@@ -87,7 +83,7 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [interactionModalOpen, setInteractionModalOpen] = useState(false);
 
-  const theme = useMemo( // Using useMemo directly as it's imported
+  const theme = useMemo( 
     () =>
       createTheme({
         palette: {

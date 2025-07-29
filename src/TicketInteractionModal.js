@@ -60,20 +60,16 @@ const TicketInteractionModal = ({ open, onClose }) => {
       try {
         if (scanner.getState && typeof scanner.getState === 'function') {
             const scannerState = scanner.getState();
-            // Check if scanner is in a state where stop() or clear() can be called
-            if (scannerState === 2 /* Html5QrcodeScannerState.SCANNING */ || scannerState === 1 /* Html5QrcodeScannerState.PAUSED */) {
-                 await scanner.stop(); // stop() should also call clear()
+            if (scannerState === 2 || scannerState === 1) {
+                 await scanner.stop(); 
                  console.log("Scanner stopped via instance.stop()");
-            } else if (scannerState === 0 /* Html5QrcodeScannerState.NOT_STARTED */ || scannerState === 3 /* Html5QrcodeScannerState.UNKNOWN - after clear often */) {
-                // If already stopped or in unknown state after clear, maybe just try clear if not done
+            } else if (scannerState === 0 || scannerState === 3) {
                 console.log("Scanner already stopped or in a non-scannable state, attempting clear if needed.");
-                // await scanner.clear(); // Can be redundant if stop() was called or if already cleared
             } else {
-                 await scanner.clear(); // Fallback for other states
+                 await scanner.clear(); 
                  console.log("Scanner cleared via instance.clear()");
             }
         } else {
-            // If getState is not available, just try clear as a fallback
             await scanner.clear();
             console.log("Scanner cleared (getState not available).");
         }
@@ -81,22 +77,18 @@ const TicketInteractionModal = ({ open, onClose }) => {
         console.warn("Error during scanner stop/clear:", error);
       }
     }
-    // The div itself will be removed by React when showScannerComponent becomes false
   }, []);
 
   const onScanSuccessCallback = useCallback(async (decodedText, decodedResult) => {
-    setShowScannerComponent(false); // Unmount scanner UI on success
-    // stopScannerCleanup will be called by the useEffect watching showScannerComponent
-
+    setShowScannerComponent(false); 
     setScannedOrSimulatedId(decodedText);
     setIsVerifying(true);
     setVerificationResult(null);
     try { const result = await verifyTicketOnChain(decodedText); setVerificationResult(result); }
     catch (e) { setVerificationResult({ success: false, message: "Verification error: " + e.message, details: null }); }
     finally { setIsVerifying(false); }
-  }, [/* No direct dependency on stopScannerCleanup here, useEffect handles it */]);
+  }, []);
 
-  // Effect to initialize scanner when showScannerComponent becomes true
   useEffect(() => {
     if (showScannerComponent && activeTab === 0 && !html5QrCodeScannerInstanceRef.current) {
       const scannerRegionDiv = document.getElementById(scannerRegionId);
@@ -105,11 +97,7 @@ const TicketInteractionModal = ({ open, onClose }) => {
         setShowScannerComponent(false);
         return;
       }
-      // The div should be new/empty due to React's conditional rendering (unmount/mount)
-      // scannerRegionDiv.innerHTML = ''; // Not strictly needed if unmount/mount works
-
       setCameraError(null);
-      // Other states like verificationResult are reset before showScannerComponent is set to true
 
       try {
         const config = { fps: 10, qrbox: { width: 200, height: 200 }, rememberLastUsedCamera: true, supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA], formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE], disableFlip: true };
@@ -132,12 +120,10 @@ const TicketInteractionModal = ({ open, onClose }) => {
     }
   }, [showScannerComponent, activeTab, onScanSuccessCallback, cameraError]); // Added cameraError
 
-  // Effect to cleanup scanner when showScannerComponent becomes false or component unmounts
   useEffect(() => {
     if (!showScannerComponent && html5QrCodeScannerInstanceRef.current) {
       stopScannerCleanup();
     }
-    // General cleanup on unmount of TicketInteractionModal
     return () => {
       if (html5QrCodeScannerInstanceRef.current) {
         stopScannerCleanup();
@@ -155,38 +141,30 @@ const TicketInteractionModal = ({ open, onClose }) => {
   }, []);
 
   const handleModalClose = useCallback(() => {
-    // stopScannerCleanup will be called by useEffect when showScannerComponent becomes false (or by unmount)
-    setInternalStatesToDefault(true); // true to reset activeTab
+    setInternalStatesToDefault(true); 
     onClose();
   }, [onClose, setInternalStatesToDefault]);
 
   const handleTabChange = useCallback(async (event, newValue) => {
-    // Ensure scanner is stopped and its UI unmounted BEFORE changing tab and other states
     if (html5QrCodeScannerInstanceRef.current || showScannerComponent) {
-      setShowScannerComponent(false); // This will trigger cleanup via useEffect
-      // Wait for cleanup if needed, though state change might be enough
-      // await new Promise(r => setTimeout(r, 50)); // Small delay for cleanup effect
+      setShowScannerComponent(false); 
     }
-    setInternalStatesToDefault(false); // Reset common states, keep current new tab
+    setInternalStatesToDefault(false); 
     setActiveTab(newValue);
-    // If new tab is Scan tab, user will click "Start Camera"
-  }, [setInternalStatesToDefault /* Removed stopScannerCleanup, handled by showScannerComponent effect */]);
+  }, [setInternalStatesToDefault]);
 
   const handleManualStartScanner = () => {
-    setInternalStatesToDefault(false); // Clear errors/results, keep current tab
-    setShowScannerComponent(true); // This triggers useEffect to init scanner
+    setInternalStatesToDefault(false); 
+    setShowScannerComponent(true); 
   };
 
   const handleScanAnother = async () => {
-    setInternalStatesToDefault(false); // Reset results/errors
-    // If on scan tab, user will click "Start Camera" to rescan
-    // Or if you want to auto-restart:
-    // if (activeTab === 0) setShowScannerComponent(true);
+    setInternalStatesToDefault(false); 
   };
 
   const handleSimulateScan = async () => {
     if (!ticketToGenerate) { alert("Please enter a Ticket ID to simulate."); return; }
-    if (showScannerComponent) setShowScannerComponent(false); // Ensure scanner UI unmounts
+    if (showScannerComponent) setShowScannerComponent(false); 
 
     setScannedOrSimulatedId(ticketToGenerate);
     setIsVerifying(true);
@@ -243,7 +221,7 @@ const TicketInteractionModal = ({ open, onClose }) => {
         </Tabs>
 
         <Box sx={{ p: {xs: 0, md: 1}, mt: 1 }}>
-            {activeTab === 0 && ( // SCAN TAB
+            {activeTab === 0 && ( 
               <Box>
                 {verificationResult || isVerifying ? (
                   renderVerificationResult()
@@ -260,7 +238,7 @@ const TicketInteractionModal = ({ open, onClose }) => {
                                 borderRadius: 1, overflow: 'hidden', bgcolor: '#f0f0f0',
                             }}
                         >
-                            {/* Content inside here is largely managed by html5-qrcode library */}
+                            {}
                             {/* Show a spinner if scanner component is shown but instance not yet ready */}
                             {!html5QrCodeScannerInstanceRef.current && !cameraError && <CircularProgress sx={{display: 'block', margin: 'auto', mt: '100px'}} />}
                         </Box>
@@ -284,7 +262,7 @@ const TicketInteractionModal = ({ open, onClose }) => {
               </Box>
             )}
 
-            {activeTab === 1 && ( // GENERATE/SIMULATE TAB
+            {activeTab === 1 && (
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, pt: 1 }}>
                 <Typography variant="h6" gutterBottom>Generate QR Code</Typography>
                 <TextField label="Ticket ID for QR" value={ticketToGenerate} onChange={(e) => setTicketToGenerate(e.target.value)} fullWidth sx={{ maxWidth: 400 }} />

@@ -2,7 +2,6 @@
 import React from 'react';
 import { Box, Grid, Button, Typography, Chip } from '@mui/material';
 
-// Define colors for different seat types
 const seatColors = {
   regular: { available: 'primary', selected: 'secondary', taken: 'action.disabled' },
   premium: { available: 'success', selected: 'warning', taken: 'action.disabled' },
@@ -48,7 +47,6 @@ function SeatMap({ section, selectedSeats, onSeatSelect }) {
     );
   }
 
-  // Group seats by row for rendering
   const rows = section.seats.reduce((acc, seat) => {
     const rowId = seat.id.split('-')[0];
     if (!acc[rowId]) {

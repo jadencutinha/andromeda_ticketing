@@ -37,33 +37,30 @@ const QrScannerModal = ({ open, onClose, onScanSuccess, onScanError }) => {
             fps: 10,
             qrbox: (viewfinderWidth, viewfinderHeight) => {
               const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-              const qrboxSize = Math.floor(minEdge * 0.7); // Make QR box 70% of the smaller dimension
+              const qrboxSize = Math.floor(minEdge * 0.7); 
               return {
                 width: qrboxSize,
                 height: qrboxSize,
               };
             },
             rememberLastUsedCamera: true,
-            supportedScanTypes: [0], // 0 for SCAN_TYPE_CAMERA
+            supportedScanTypes: [0], 
             formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ]
           },
-          /* verbose= */ false
+          false
         );
 
         const successCallback = (decodedText, decodedResult) => {
           if (html5QrCodeScannerRef.current) {
-            html5QrCodeScannerRef.current.clear(); // Clear scanner on success
-            html5QrCodeScannerRef.current = null; // Reset ref
+            html5QrCodeScannerRef.current.clear(); 
+            html5QrCodeScannerRef.current = null; 
           }
           onScanSuccess(decodedText, decodedResult);
           setIsScanning(false);
-          onClose(); // Close modal on success
+          onClose(); 
         };
 
         const errorCallback = (errorMessage) => {
-          // console.warn(`QR Code scan error: ${errorMessage}`);
-          // onScanError can be called here if needed for continuous error reporting
-          // For simplicity, we'll let it keep trying or handle major errors
         };
 
         scanner.render(successCallback, errorCallback);
@@ -88,8 +85,7 @@ const QrScannerModal = ({ open, onClose, onScanSuccess, onScanError }) => {
         setIsScanning(false);
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, onScanSuccess, onClose]); // Rerun if open changes
+  }, [open, onScanSuccess, onClose]); 
 
   const handleClose = () => {
     if (html5QrCodeScannerRef.current) {
